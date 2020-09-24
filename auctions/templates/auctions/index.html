@@ -1,0 +1,130 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {%if watchListdata %}
+        <h3>Watch List </h3>
+        {% for list in watchListdata %}
+            {% for listData in list.listItem.all %}
+            <div class="box">
+            <a href="{% url 'listView' listId=listData.id  %}">
+            <img src="{{ listData.image.url}} " width="250" height="150"></br>
+            <h3>{{ listData.title }}</h3> ${{ listData.price }} </br>
+            </a>
+            <a href="{% url 'delteId' deletId=listData.id %}">Remove </a>
+            {%if listData.id in dat %}
+                <button type="button" class="btn btn-danger">SOLD</button>
+            {% endif %}
+            </div>
+            {% endfor%}
+        {% endfor %}
+    {% else %}
+    <h2>Listings</h2>
+    <div id="dataDetail">
+    {%if dataDetail %}
+        <img src="{{ dataDetail.image.url}} " width="250" height="200">
+        <h4>{{ dataDetail.title }}</h4>
+        Started At: <h4>US ${{dataDetail.price }} </h4>
+        Current bid : <h4>US $ {%if finaAmt%} {{finaAmt}} {%else%} {{aucAmt}} {%endif%} </h4>
+        <div class="message"> {{ mess }} </div>
+        {% if dataDetail.id in dat %}
+            <button type="button" class="btn btn-danger">SOLD</button>
+        {% else %}
+            <form action="{% url 'bidId' bidId=dataDetail.id %}" method="post">
+                {% csrf_token %}
+                <input type="text"  id="quantity" name="quantity" autocomplete="off">
+                <input type="submit" name="bid" value="Place bid">
+                <input type="submit" name="Watchlist" value="Add to Watchlist"> 
+                {%if messages %}
+                {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                <div class="message"> {{ message }}</div>
+                {% endif %}
+                {%endfor%}
+                {% endif %}
+            </form>
+            [bids {%if bid %}{{bid}} {%else%}0{%endif%}]
+            </br>
+        {% endif %}
+        
+        <h4>Details </h4>
+        <ul>
+            <li>Name: {{dataDetail.title }}</li>
+            <li>Category: <a href="{% url 'categoryData' categoryName=dataDetail.category idLast=dataDetail.id%}">{{dataDetail.category }}</a></li>
+            <li>Created by : {{dataDetail.userName }}</li>
+            <li>About : {{ dataDetail.discription}} </li>
+        </ul>
+        </div>
+        <hr>
+        <form action="{% url 'userComment' commId=dataDetail.id %}" method="post">
+            {% csrf_token %}
+            <input id="comment" type="text" name="comment" placeholder="comment" autocomplete="off">
+            <input type="submit" value="Comment">
+        </form>
+        </br>
+        {%if userComment %}
+            {% for comment in userComment %}
+            <div id="comment">
+                <h4> {{ comment.userName }} </h4> <b>said</b> "{{comment.comments }}"</br>
+                <small>{{ comment.timeDate|date:"M d, Y" }}</small>
+            </div>
+            
+            {% endfor %}
+        {% endif %}
+        
+
+    {% else %}
+        {% for list in data %}
+        <!--List show on the main Active Listings -->
+            {%if list.id not in dat or list.id in closedBidNum %}
+            <div class="box">
+                <a href="{% url 'listView' listId=list.id %}">
+                <img src="{{ list.image.url}} " width="250" height="150"></br>
+                <h3>{{ list.title }}</h3> ${{ list.price}}
+                {%if list.id in closedBidNum %}
+                    <button type="button" class="btn btn-danger">Congrats! You Won </button>
+                {% endif %}
+            </div>
+            {% endif %}
+        	
+        	</a>
+    	{% endfor %}
+    {% endif %}
+    {% endif %}
+    <!--If user clicks on Category  -->
+        {% for list in categoryName %}
+            
+            {%if list.id not in dat %}
+            <div class="box">
+                <a href="{% url 'listView' listId=list.id %}">
+                <img src="{{ list.image.url}} " width="250" height="150"></br>
+                <h3>{{ list.title }}</h3> ${{ list.price}}
+            </div>
+            {% endif %}
+            
+            </a>
+        {% endfor %}
+
+<!--Post from Listing. -->
+    {% if my_list %}
+        {% for list in my_list %}
+            <div class="box">
+            <a href="{% url 'listView' listId=list.id %}">
+            <img src="{{ list.image.url}} " width="250" height="150"></br>
+            <h3>{{ list.title }}</h3> ${{ list.price}}
+            </a> </br>
+            {% if list.id in dat %}
+                <button type="button" class="btn btn-danger">SOLD</button>
+            {% else %}
+                <form action="{% url 'close' closeId=list.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" name="close">Close</button> 
+            </form>
+            {% endif %}
+        
+            </div>
+                        
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

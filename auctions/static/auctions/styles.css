@@ -1,0 +1,47 @@
+body {
+    padding: 10px;
+}
+.box {
+	width: 30%;
+	border: 2px solid #f2f2f2;
+	padding: 20px 0 10px 20px;
+	display: inline-block;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+a:link{
+	text-decoration: none;
+}
+.box:hover {
+	box-shadow: 0 0 7px rgba(33,33,33,.2);
+	text-decoration: none;
+}
+#dataDetail{
+	margin-left: 3%;
+}
+input[type="submit"] {
+	font-size: 120%;
+	background-color: #66a3ff;
+	color: white;
+	
+	border: 0.01em solid #e6e6e6;
+}
+input[type="text"]{
+	padding: 5px 5px 5px 5px; 
+}
+input[type="submit"]:hover {
+	background-color: blue;
+}
+.createData{
+	width: 80%;
+	margin-left: 4%;
+}
+#comment {
+	margin-left: 5%;
+	width: 70%;
+	padding: 5px 8px 5px 8px;
+	border-radius: 2%;
+}
+.message {
+	color: red;
+}
